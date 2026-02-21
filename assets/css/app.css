@@ -1,0 +1,963 @@
+/* See the Tailwind configuration guide for advanced usage
+   https://tailwindcss.com/docs/configuration */
+
+@import "tailwindcss" source(none);
+@source "../css";
+@source "../js";
+@source "../../lib/voice_prompt_web";
+
+/* A Tailwind plugin that makes "hero-#{ICON}" classes available.
+   The heroicons installation itself is managed by your mix.exs */
+@plugin "../vendor/heroicons";
+
+/* daisyUI Tailwind Plugin. You can update this file by fetching the latest version with:
+   curl -sLO https://github.com/saadeghi/daisyui/releases/latest/download/daisyui.js
+   Make sure to look at the daisyUI changelog: https://daisyui.com/docs/changelog/ */
+@plugin "../vendor/daisyui" {
+  themes: false;
+}
+
+/* daisyUI theme plugin. You can update this file by fetching the latest version with:
+  curl -sLO https://github.com/saadeghi/daisyui/releases/latest/download/daisyui-theme.js
+  We ship with two themes, a light one inspired on Phoenix colors and a dark one inspired
+  on Elixir colors. Build your own at: https://daisyui.com/theme-generator/ */
+@plugin "../vendor/daisyui-theme" {
+  name: "dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: oklch(30.33% 0.016 252.42);
+  --color-base-200: oklch(25.26% 0.014 253.1);
+  --color-base-300: oklch(20.15% 0.012 254.09);
+  --color-base-content: oklch(97.807% 0.029 256.847);
+  --color-primary: oklch(58% 0.233 277.117);
+  --color-primary-content: oklch(96% 0.018 272.314);
+  --color-secondary: oklch(58% 0.233 277.117);
+  --color-secondary-content: oklch(96% 0.018 272.314);
+  --color-accent: oklch(60% 0.25 292.717);
+  --color-accent-content: oklch(96% 0.016 293.756);
+  --color-neutral: oklch(37% 0.044 257.287);
+  --color-neutral-content: oklch(98% 0.003 247.858);
+  --color-info: oklch(58% 0.158 241.966);
+  --color-info-content: oklch(97% 0.013 236.62);
+  --color-success: oklch(60% 0.118 184.704);
+  --color-success-content: oklch(98% 0.014 180.72);
+  --color-warning: oklch(66% 0.179 58.318);
+  --color-warning-content: oklch(98% 0.022 95.277);
+  --color-error: oklch(58% 0.253 17.585);
+  --color-error-content: oklch(96% 0.015 12.422);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.21875rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "../vendor/daisyui-theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: oklch(98% 0 0);
+  --color-base-200: oklch(96% 0.001 286.375);
+  --color-base-300: oklch(92% 0.004 286.32);
+  --color-base-content: oklch(21% 0.006 285.885);
+  --color-primary: oklch(70% 0.213 47.604);
+  --color-primary-content: oklch(98% 0.016 73.684);
+  --color-secondary: oklch(55% 0.027 264.364);
+  --color-secondary-content: oklch(98% 0.002 247.839);
+  --color-accent: oklch(0% 0 0);
+  --color-accent-content: oklch(100% 0 0);
+  --color-neutral: oklch(44% 0.017 285.786);
+  --color-neutral-content: oklch(98% 0 0);
+  --color-info: oklch(62% 0.214 259.815);
+  --color-info-content: oklch(97% 0.014 254.604);
+  --color-success: oklch(70% 0.14 182.503);
+  --color-success-content: oklch(98% 0.014 180.72);
+  --color-warning: oklch(66% 0.179 58.318);
+  --color-warning-content: oklch(98% 0.022 95.277);
+  --color-error: oklch(58% 0.253 17.585);
+  --color-error-content: oklch(96% 0.015 12.422);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.21875rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/* Add variants based on LiveView classes */
+@custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
+@custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
+@custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
+
+/* Use the data attribute for dark mode  */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Make LiveView wrapper divs transparent for layout */
+[data-phx-session], [data-phx-teleported-src] { display: contents }
+
+/* This file is for your main application CSS */
+
+/* ── VoicePrompt Design System ── */
+:root {
+  --vp-bg-dark: #0d1117;
+  --vp-bg-card: #161b22;
+  --vp-bg-card-hover: #1c2333;
+  --vp-bg-input: #0f3460;
+  --vp-accent: #e94560;
+  --vp-accent-hover: #d63851;
+  --vp-accent-glow: rgba(233, 69, 96, 0.3);
+  --vp-green: #4ecca3;
+  --vp-green-glow: rgba(78, 204, 163, 0.3);
+  --vp-text: #e6edf3;
+  --vp-text-muted: #8b949e;
+  --vp-text-faint: #484f58;
+  --vp-border: #30363d;
+  --vp-radius: 10px;
+}
+
+/* ── App layout (teleprompter pages) ── */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--vp-bg-dark);
+  color: var(--vp-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+}
+
+/* ── Sidebar ── */
+.app-sidebar {
+  width: 300px;
+  min-width: 300px;
+  background: rgba(22, 27, 34, 0.6);
+  backdrop-filter: blur(16px);
+  border-right: 1px solid var(--vp-border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 16px;
+  gap: 4px;
+}
+.app-sidebar::-webkit-scrollbar { width: 6px; }
+.app-sidebar::-webkit-scrollbar-track { background: transparent; }
+.app-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+.app-sidebar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 4px 0 12px;
+  color: var(--vp-text);
+  text-decoration: none;
+}
+
+/* ── Sidebar groups ── */
+.sidebar-group {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.group-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--vp-text-muted);
+}
+
+/* ── Icon button ── */
+.icon-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  color: var(--vp-text-muted);
+  font-size: 11px;
+  padding: 4px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+.icon-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--vp-text);
+}
+
+/* ── Textarea ── */
+#scriptInput {
+  width: 100%;
+  min-height: 120px;
+  max-height: 200px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--vp-border);
+  border-radius: 8px;
+  color: var(--vp-text);
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 10px 12px;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+#scriptInput:focus {
+  outline: none;
+  border-color: var(--vp-accent);
+}
+#scriptInput::placeholder {
+  color: var(--vp-text-faint);
+}
+
+/* ── Control items ── */
+.control-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  gap: 8px;
+}
+.control-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--vp-text-muted);
+  flex: 1;
+  min-width: 0;
+}
+.control-value {
+  font-size: 11px;
+  color: var(--vp-text-faint);
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Range slider ── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  max-width: 120px;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+/* ── Select ── */
+.control-item select {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--vp-border);
+  border-radius: 6px;
+  color: var(--vp-text);
+  font-size: 12px;
+  padding: 5px 8px;
+  max-width: 140px;
+  cursor: pointer;
+}
+.control-item select:focus {
+  outline: none;
+  border-color: var(--vp-accent);
+}
+
+/* ── Toggle switch ── */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
+  transition: 0.3s;
+}
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--vp-accent);
+}
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(16px);
+}
+
+/* ── Action buttons ── */
+.action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.btn-action {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn-go {
+  background: var(--vp-accent);
+  color: white;
+  box-shadow: 0 2px 12px var(--vp-accent-glow);
+}
+.btn-go:hover { background: var(--vp-accent-hover); }
+.btn-go.active {
+  background: var(--vp-green);
+  box-shadow: 0 2px 12px var(--vp-green-glow);
+}
+.btn-stop {
+  background: rgba(255,255,255,0.06);
+  color: var(--vp-text-muted);
+  border: 1px solid var(--vp-border);
+}
+.btn-stop:hover { background: rgba(255,255,255,0.1); color: var(--vp-text); }
+
+/* Live dot animation */
+.btn-go-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  display: inline-block;
+}
+.btn-go.active .btn-go-dot {
+  background: white;
+  animation: pulse-dot 1.5s ease infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+.action-buttons-secondary {
+  display: flex;
+  gap: 4px;
+}
+.btn-subtle {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--vp-text-faint);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+.btn-subtle:hover { background: rgba(255,255,255,0.04); color: var(--vp-text-muted); }
+
+/* ── Voice status ── */
+.voice-status {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--vp-text-faint);
+  border-radius: 6px;
+  min-height: 32px;
+  word-break: break-word;
+  transition: all 0.3s;
+}
+.voice-status.listening {
+  color: var(--vp-green);
+  background: rgba(78, 204, 163, 0.06);
+}
+.voice-status.error {
+  color: var(--vp-accent);
+  background: rgba(233, 69, 96, 0.06);
+}
+
+/* ── Sidebar footer / shortcuts ── */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.shortcuts-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--vp-text-faint);
+  margin-bottom: 6px;
+}
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 10px;
+  font-size: 12px;
+  color: var(--vp-text-faint);
+}
+.shortcuts-grid kbd {
+  font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* ── Teleprompter display ── */
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+}
+.app-main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--vp-text-faint);
+  text-transform: uppercase;
+}
+.app-main-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20vh 60px 40vh 60px;
+}
+.app-main-text {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Teleprompter word styles */
+.app-main-text .word {
+  display: inline;
+  color: #fff;
+  line-height: 1.9;
+  transition: opacity 0.5s ease;
+  opacity: 0.15;
+}
+.app-main-text .para-break {
+  display: block;
+  height: 0.8em;
+}
+
+/* Mirror */
+.app-main.mirrored .app-main-scroll { transform: scaleX(-1); }
+
+/* Progress bar */
+.progress-bar-track {
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+}
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--vp-accent);
+  transition: width 0.4s ease;
+}
+
+/* Light mode for prompter display */
+.app-main.light-mode {
+  background: #f5f5f0;
+}
+.app-main.light-mode .app-main-text .word {
+  color: #1a1a1a;
+}
+.app-main.light-mode .app-main-header {
+  color: #999;
+}
+.app-main.light-mode .progress-bar-track {
+  background: rgba(0,0,0,0.08);
+}
+
+/* ── Script meta (reading time) ── */
+.script-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+.reading-time {
+  font-size: 11px;
+  color: var(--vp-text-faint);
+}
+
+/* ── Countdown overlay ── */
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 120px;
+  font-weight: 700;
+  color: var(--vp-accent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.countdown-overlay.show {
+  opacity: 1;
+}
+
+/* ── Color pickers ── */
+.color-pickers {
+  display: flex;
+  gap: 8px;
+}
+.color-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--vp-text-faint);
+  cursor: pointer;
+}
+.color-picker-item input[type="color"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--vp-border);
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+}
+.color-picker-item input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.color-picker-item input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
+
+/* ── Remote modal ── */
+.remote-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.remote-modal {
+  background: var(--vp-bg-card);
+  border: 1px solid var(--vp-border);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  overflow: hidden;
+}
+.remote-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--vp-border);
+}
+.remote-modal-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--vp-text);
+}
+.remote-modal-close {
+  background: none;
+  border: none;
+  color: var(--vp-text-muted);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+}
+.remote-modal-close:hover { color: var(--vp-text); }
+.remote-modal-body {
+  padding: 20px;
+  text-align: center;
+}
+.remote-modal-body p {
+  font-size: 13px;
+  color: var(--vp-text-muted);
+  margin-bottom: 16px;
+}
+.qr-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.remote-url-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.remote-url-input {
+  flex: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--vp-border);
+  border-radius: 6px;
+  color: var(--vp-text);
+  font-size: 11px;
+  padding: 6px 10px;
+  font-family: 'SF Mono', 'Consolas', monospace;
+}
+.remote-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--vp-green);
+  padding: 10px;
+  background: rgba(78, 204, 163, 0.06);
+  border-radius: 8px;
+}
+.remote-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--vp-green);
+  animation: pulse-dot 1.5s ease infinite;
+}
+
+/* ── Remote page (phone) ── */
+.remote-page {
+  min-height: 100vh;
+  background: var(--vp-bg-dark);
+  color: var(--vp-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.remote-header {
+  padding: 16px 20px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.remote-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.remote-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--vp-text-muted);
+  background: rgba(255,255,255,0.06);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.connection-status {
+  padding: 0 20px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--vp-text-faint);
+  transition: all 0.3s;
+}
+.status-dot.connected {
+  background: var(--vp-green);
+  box-shadow: 0 0 8px var(--vp-green-glow);
+}
+.status-text {
+  font-size: 12px;
+  color: var(--vp-text-muted);
+}
+.remote-progress {
+  padding: 0 20px 16px;
+}
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--vp-text-muted);
+}
+.progress-info strong {
+  color: var(--vp-text);
+  font-weight: 600;
+}
+.progress-track {
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--vp-accent), #ff8a80);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.remote-controls-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.remote-controls {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 20px;
+  overflow: hidden;
+}
+.play-btn {
+  width: 100%;
+  height: 120px;
+  border: none;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--vp-accent);
+  color: #fff;
+  box-shadow: 0 4px 20px var(--vp-accent-glow);
+}
+.play-btn:active { transform: scale(0.97); }
+.play-btn.running {
+  background: #1a6b3f;
+  box-shadow: 0 4px 20px var(--vp-green-glow);
+}
+.nav-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.nav-btn {
+  height: 72px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  background: var(--vp-bg-card);
+  color: var(--vp-text);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.nav-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.08); }
+.sentence-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.sentence-btn {
+  height: 56px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  color: var(--vp-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.sentence-btn:active { transform: scale(0.95); color: var(--vp-text); background: rgba(255,255,255,0.06); }
+.speed-control {
+  background: var(--vp-bg-card);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.speed-label {
+  font-size: 12px;
+  color: var(--vp-text-muted);
+  white-space: nowrap;
+  min-width: 42px;
+}
+.speed-control .speed-slider {
+  flex: 1;
+  max-width: none;
+}
+.speed-val {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 20px;
+  text-align: center;
+}
+.reset-btn {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--vp-text-faint);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  margin-bottom: 20px;
+}
+.reset-btn:active { color: var(--vp-text-muted); background: rgba(255,255,255,0.04); }
+.waiting-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+.waiting-screen .spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--vp-accent);
+  border-radius: 50%;
+  animation: vp-spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+@keyframes vp-spin { to { transform: rotate(360deg); } }
+.waiting-screen h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: var(--vp-text);
+}
+.waiting-screen p {
+  font-size: 14px;
+  color: var(--vp-text-muted);
+  line-height: 1.5;
+}
+
+/* Scrollbar for prompter */
+.app-main-scroll::-webkit-scrollbar { width: 0; }
+
+/* ── Remote script display ── */
+.remote-script-display {
+  background: #000;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+  max-height: 40vh;
+  flex-shrink: 0;
+}
+.remote-script-header {
+  padding: 8px 16px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--vp-text-faint);
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.remote-script-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 40px 20px;
+}
+.remote-script-scroll::-webkit-scrollbar { width: 0; }
+.remote-script-text {
+  font-size: 20px;
+  line-height: 1.8;
+  max-width: 100%;
+}
+.remote-script-text .word {
+  display: inline;
+  color: #fff;
+  transition: opacity 0.4s ease;
+}
+.remote-script-text .para-break {
+  display: block;
+  height: 0.6em;
+}
