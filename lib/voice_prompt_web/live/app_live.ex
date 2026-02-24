@@ -159,7 +159,6 @@ defmodule VoicePromptWeb.AppLive do
                 <option value="zh-CN">中文 (简体)</option>
                 <option value="hi-IN">हिन्दी</option>
                 <option value="ar-SA">العربية</option>
-                <option value="ru-RU">Русский</option>
                 <option value="pl-PL">Polski</option>
                 <option value="sv-SE">Svenska</option>
                 <option value="da-DK">Dansk</option>
